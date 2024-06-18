@@ -41,18 +41,18 @@ func TestLogin(t *testing.T) {
 
 	// Create a test user
 	testUser := models.User{
-		Email:    "testuser@example.com",
-		Password: "testpassword",
+		Email:    "star@example.com",
+		Password: "starpassword",
 		Name:     "Test User",
-		Gender:   "M",
+		Gender:   "F",
 		DOB:      time.Now(),
 	}
 	database.GetDB().Create(&testUser)
 
 	// Create a test login request
 	loginData := map[string]string{
-		"email":    "testuser@example.com",
-		"password": "testpassword",
+		"email":    "star@example.com",
+		"password": "starpassword",
 	}
 	loginJSON, _ := json.Marshal(loginData)
 

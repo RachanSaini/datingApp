@@ -7,6 +7,7 @@ import (
 	"rachanDatingApp/database"
 	"rachanDatingApp/models"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,6 +30,30 @@ func CreateUser(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{"user": user})
 }
+
+func RegisterUser(c *gin.Context) {
+	var user models.User
+	if err := c.BindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	//Random location
+	user.Location = strconv.Itoa(rand.Intn(100))
+	user.CreatedAt = time.Now()
+	user.UpdatedAt = time.Now()
+
+	if err := database.GetDB().Create(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	user.Password = ""
+
+	c.JSON(http.StatusCreated, gin.H{"user": user})
+}
+
+// GetUsers handler
 
 // User Authentication
 func Login(c *gin.Context) {
