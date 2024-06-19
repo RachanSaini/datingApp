@@ -13,13 +13,17 @@ import (
 func DiscoverProfiles(c *gin.Context) {
 	var profiles []models.User
 
-	//fetch all users except the current user
-	userID := c.GetInt("userId")
-	db := database.GetDB()
-	db.Not("id", userID).Find(&profiles)
+	//current logged in user not discoverable
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "User not logged in",
+		})
+		return
+	}
 
-	//exclude the profiles that the user has already swiped
-	//future work (this can be implemented by storing the swipe history)
+	//fetch all profiles except the current logged in user
+	database.GetDB().Where("id != ?", userID).Find(&profiles)
 
 	var results []gin.H
 	for _, profile := range profiles {

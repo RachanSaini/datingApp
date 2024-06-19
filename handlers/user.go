@@ -53,7 +53,23 @@ func RegisterUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"user": user})
 }
 
-// GetUsers handler
+// Get token from user id for internal use
+func GetToken(c *gin.Context) {
+	id := c.Param("id")
+	var user models.User
+	if err := database.GetDB().First(&user, id).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	token, err := auth.GenerateToken(user.ID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"token": token})
+}
 
 // User Authentication
 func Login(c *gin.Context) {

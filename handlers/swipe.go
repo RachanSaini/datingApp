@@ -8,7 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Swipeprofile(c *gin.Context) {
+// SwipeProfile handles the swipe action between users
+func SwipeProfile(c *gin.Context) {
 	var req struct {
 		OtherUserID uint   `json:"otherUserId"`
 		Choice      string `json:"choice"` // YES or NO
@@ -18,35 +19,44 @@ func Swipeprofile(c *gin.Context) {
 		return
 	}
 
-	// set at authentication
-	userId := c.GetInt("userID")
-
-	//checking existing swipe
-	var existingSwipe models.Swipe
-	db := database.GetDB()
-	if err := db.Where("user_id = ? AND other_user_id = ?", userId, req.OtherUserID).First(&existingSwipe).Error; err == nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Swipe already exists"})
+	userId := c.GetUint("user_id")
+	if userId == uint(req.OtherUserID) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Cannot swipe on the same user"})
 		return
 	}
 
-	// Create a new swipe record
-	newSwipe := models.Swipe{
-		UserID:      uint(userId),
-		OtherUserID: req.OtherUserID,
-		Choice:      req.Choice,
+	db := database.GetDB()
+	var existingSwipe models.Swipe
+	err := db.Where("user_id = ? AND other_user_id = ?", userId, req.OtherUserID).First(&existingSwipe).Error
+
+	if err == nil {
+		// Swipe already exists, update it
+		existingSwipe.Choice = req.Choice
+		db.Save(&existingSwipe)
+	} else {
+		// Create a new swipe
+		existingSwipe = models.Swipe{
+			UserID:      uint(userId),
+			OtherUserID: req.OtherUserID,
+			Choice:      req.Choice,
+		}
+		db.Create(&existingSwipe)
 	}
+
+	// Check for a match
 	if req.Choice == "YES" {
-		//check other user swiped yes as well
 		var otherSwipe models.Swipe
 		if err := db.Where("user_id = ? AND other_user_id = ? AND choice = ?", req.OtherUserID, userId, "YES").First(&otherSwipe).Error; err == nil {
-			newSwipe.Matched = true
-			otherSwipe.Matched = true
-			db.Save(&otherSwipe)
+			// Create a match
+			match := models.Match{
+				UserID1: uint(userId),
+				UserID2: req.OtherUserID,
+			}
+			db.Create(&match)
+			c.JSON(http.StatusOK, gin.H{"results": gin.H{"matched": true, "matchID": match.ID}})
+			return
 		}
 	}
 
-	db.Create(&newSwipe)
-
-	c.JSON(http.StatusOK, gin.H{"results": gin.H{"matched": newSwipe.Matched, "matchID": newSwipe.ID}})
-
+	c.JSON(http.StatusOK, gin.H{"results": gin.H{"matched": false, "matchID": existingSwipe.ID}})
 }

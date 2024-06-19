@@ -42,7 +42,7 @@ func InitDB() {
 	}
 
 	// AutoMigrate creates/updates the database schema for the given models
-	if err := db.AutoMigrate(&models.User{}, &models.Swipe{}).Error; err != nil {
+	if err := db.AutoMigrate(&models.User{}, &models.Swipe{}, &models.Match{}).Error; err != nil {
 		panic("failed to migrate database schema: " + err.Error())
 	}
 

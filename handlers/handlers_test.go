@@ -26,7 +26,7 @@ func setup() {
 	database.InitDB()
 
 	// Migrate the schema
-	database.GetDB().AutoMigrate(&models.User{})
+	database.GetDB().AutoMigrate(&models.User{}, &models.Swipe{}, &models.Match{})
 }
 
 func TestLogin(t *testing.T) {
