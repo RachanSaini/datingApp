@@ -11,6 +11,7 @@
 ### Environment Variables
 
 Create a `.env` file in the root of the project with the following content:
+
 ```
 DB_HOST=localhost
 DB_PORT=3306
@@ -23,6 +24,10 @@ SECRET_KEY=<your_secret_key>
 ### Running the Application
 
 1. Clone the repository
+```
+git clone <repository_url>
+cd <repository_directory>
+```
 
 2. Set the environment variables
 
@@ -49,7 +54,7 @@ curl --location 'http://localhost:8080/users/register' \
 
 ```
 
-You will see response as
+Example response:
 
 ```
 {
@@ -67,7 +72,7 @@ You will see response as
 }
 ```
 
-5. Login and copy the generated token as this is needed for authentication.
+5. Login and obtain the authentication token.
 
 ```
 curl --location 'http://localhost:8080/auth/login' \
@@ -79,7 +84,7 @@ curl --location 'http://localhost:8080/auth/login' \
 
 ```
 
-You will get token as response, don't forget to copy this token.
+Example response:
 
 ```
 {
@@ -87,6 +92,7 @@ You will get token as response, don't forget to copy this token.
 }
 
 ```
+Copy the token as it will be needed for authentication in subsequent requests.
 
 6. Discover all other profiles.
 
@@ -94,7 +100,7 @@ You will get token as response, don't forget to copy this token.
 curl --location 'http://localhost:8080/discover' \
 --header 'Authorization: Bearer <token>'
 ```
-Response would be other registered users:
+Example response:
 
 ```
 {
@@ -122,7 +128,8 @@ Response would be other registered users:
 
 ```
 
-7. Swipe on desired profile with user id and choice. Choice can be YES or NO
+7. Swipe on desired profile with user ID and choice (YES or NO).
+
 ```
 curl --location 'http://localhost:8080/discover/swipe' \
 --header 'Content-Type: application/json' \
@@ -132,7 +139,18 @@ curl --location 'http://localhost:8080/discover/swipe' \
 }'
 ```
 
-if it is not a match you will get matched "false", if its a match you will get:
+Example response if it's not a match:
+
+```
+{
+    "results": {
+        "matchID": 1,
+        "matched": false
+    }
+}
+```
+
+Example response if it's a match:
 
 ```
 {
@@ -142,6 +160,3 @@ if it is not a match you will get matched "false", if its a match you will get:
     }
 }
 ```
-
-
-
