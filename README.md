@@ -4,22 +4,7 @@
 
 ### Prerequisites
 
-- Docker
-- Docker Compose
 - MySql
-
-### Environment Variables
-
-Create a `.env` file in the root of the project with the following content:
-
-```
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=<mysql_user>
-DB_PASSWORD=<mysql_passwors>
-DB_NAME=<database_name>
-SECRET_KEY=<your_secret_key>
-```
 
 ### Running the Application
 
@@ -29,7 +14,16 @@ git clone <repository_url>
 cd <repository_directory>
 ```
 
-2. Set the environment variables
+2. Set the environment variables. Create a `.env` file in the root of the project with the following content:
+
+```
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=<mysql_user>
+DB_PASSWORD=<mysql_passwors>
+DB_NAME=<database_name>
+SECRET_KEY=<your_secret_key>
+```
 
 3. Run the go application
 
