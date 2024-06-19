@@ -13,8 +13,7 @@ func main() {
 	database.InitDB()
 
 	//set gin mode
-	gin.SetMode(gin.DebugMode)
-	//gin.SetMode(gin.ReleaseMode)
+	gin.SetMode(gin.ReleaseMode)
 
 	//create gin router
 	router := gin.Default()
